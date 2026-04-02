@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torchvision import models, transforms
 from PIL import Image
 import os
+import gdown
 import numpy as np
 import cv2
 import json
@@ -36,9 +37,14 @@ def save_history(record):
         json.dump(history, f, indent=4)
 
 # ---------------- MODEL ----------------
+model_path = "best_resnet50_final.pth"
+
+if not os.path.exists(model_path):
+    url = "https://drive.google.com/uc?id=1KTQAzmuztzz9pCwBxOH5tFWLga2EUI1Y"
+    gdown.download(url, model_path, quiet=False)
 model = models.resnet50(weights=None)
 model.fc = torch.nn.Linear(model.fc.in_features, 6)
-model.load_state_dict(torch.load("model/best_resnet50_final.pth", map_location="cpu"))
+model.load_state_dict(torch.load(model_path, map_location="cpu"))
 model.eval()
 
 classes = ["Atelectasis","Cardiomegaly","Effusion","Infiltration","Mass","Normal"]
